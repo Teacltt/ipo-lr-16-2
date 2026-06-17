@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Каталог — Детский Мир</title>
+</head>
+<body style="font-family: sans-serif; margin: 20px; background-color: #f8f9fa;">
+
+    <h1>Каталог товаров Детского Мира</h1>
+    <p><a href="/">🏠 На главную страницу</a> | <a href="/cart/">🛒 Перейти в корзину</a></p>
+    <hr>
+
+    <div style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); border: 1px solid #e9ecef; margin-bottom: 25px; max-width: 800px;">
+        <form method="GET" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+            <input type="text" name="q" value="{{ request.GET.q|default:'' }}" placeholder="Поиск по названию или описанию..." style="padding: 6px; border: 1px solid #ced4da; border-radius: 4px; flex-grow: 1;">
+            
+            <select name="category" style="padding: 6px; border: 1px solid #ced4da; border-radius: 4px;">
+                <option value="">Все категории</option>
+                {% for cat in categories %}
+                    <option value="{{ cat.id }}" {% if request.GET.category == cat.id|stringformat:"i" %}selected{% endif %}>{{ cat.name }}</option>
+                {% endfor %}
+            </select>
+
+            <select name="manufacturer" style="padding: 6px; border: 1px solid #ced4da; border-radius: 4px;">
+                <option value="">Все производители</option>
+                {% for man in manufacturers %}
+                    <option value="{{ man.id }}" {% if request.GET.manufacturer == man.id|stringformat:"i" %}selected{% endif %}>{{ man.name }}</option>
+                {% endfor %}
+            </select>
+
+            <button type="submit" style="background-color: #0d6efd; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer;">🔍 Найти</button>
+            <a href="/catalog/" style="color: #6c757d; font-size: 13px; text-decoration: none;">❌ Сбросить</a>
+        </form>
+    </div>
+
+    <ul>
+        {% if products %}
+            {% for product in products %}
+                <li style="margin-bottom: 15px; background: white; padding: 15px; border-radius: 8px; max-width: 500px; list-style: none; box-shadow: 0 2px 5px rgba(0,0,0,0.02); border: 1px solid #e9ecef;">
+                    <strong style="font-size: 18px;">{{ product.name }}</strong> <br>
+                    <p style="color: #6c757d; font-size: 14px; margin: 5px 0;">{{ product.description }}</p>
+                    <span style="color: #0d6efd; font-weight: bold;">Цена: {{ product.price }} BYN</span> | 
+                    <span style="color: #198754; font-weight: bold;">Склад: {{ product.stock }} шт.</span> <br>
+                    <small style="color: #6c757d;">Категория: {{ product.category.name }} | Бренд: {{ product.manufacturer.name }}</small>
+                    
+                    <div style="margin-top: 12px; display: flex; gap: 15px; align-items: center;">
+                        <a href="/catalog/{{ product.id }}/" style="color: #495057; font-weight: bold; text-decoration: none; font-size: 14px;">🔍 Подробнее</a>
+                        <a href="/cart/add/{{ product.id }}/" style="background-color: #198754; color: white; border: none; padding: 5px 10px; border-radius: 4px; font-weight: bold; text-decoration: none; font-size: 13px;">🛒 Купить товар</a>
+                    </div>
+                </li>
+            {% endfor %}
+        {% else %}
+            <li>Товаров по заданным фильтрам поиска не найдено.</li>
+        {% endif %}
+    </ul>
+
+</body>
+</html>
