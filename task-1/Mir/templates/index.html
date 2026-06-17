@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Детский Мир — Главная</title>
+</head>
+<body style="background-color: #f8f9fa; font-family: sans-serif; margin: 0; padding: 20px;">
+
+    <div style="background-color: white; padding: 20px; text-align: center; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.03); max-width: 500px; margin: 0 auto 30px auto;">
+        <div style="font-size: 30px; margin-bottom: 5px;">🧸</div>
+        <h1 style="color: #212529; margin: 0 0 15px 0; font-size: 28px; font-weight: bold;">Детский Мир</h1>
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <a href="/info/" style="border: 1px solid #ced4da; color: #495057; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-size: 14px; background: white; font-weight: bold; display: flex; align-items: center; gap: 5px;">📖 О магазине</a>
+            <a href="/about/" style="border: 1px solid #ced4da; color: #495057; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-size: 14px; background: white; font-weight: bold; display: flex; align-items: center; gap: 5px;">👤 Об авторе</a>
+            <a href="/cart/" style="background-color: #0d6efd; color: white; text-decoration: none; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: bold; display: flex; align-items: center; gap: 5px;">🛒 Корзина</a>
+        </div>
+    </div>
+
+    <div style="max-width: 1100px; margin: 0 auto; display: flex; gap: 30px; flex-wrap: wrap;">
+        
+        <div style="flex: 1; min-width: 320px; display: flex; flex-direction: column; gap: 20px;">
+            
+            {% if error_message %}
+                <div style="background-color: #f8d7da; color: #842029; padding: 12px; border-radius: 6px; font-size: 14px; font-weight: bold; border: 1px solid #f5c2c7;">
+                    ⚠️ {{ error_message }}
+                </div>
+            {% endif %}
+
+            {% if success_message %}
+                <div style="background-color: #d1e7dd; color: #0f5132; padding: 12px; border-radius: 6px; font-size: 14px; font-weight: bold; border: 1px solid #badbcc;">
+                    ✅ {{ success_message }}
+                </div>
+            {% endif %}
+
+            <div style="background-color: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); border: 1px solid #e9ecef;">
+                <h3 style="margin-top: 0; color: #212529; border-bottom: 2px solid #f1f3f5; padding-bottom: 8px; font-size: 18px; display: flex; align-items: center; gap: 8px;">📁 Категории товаров</h3>
+                <ul style="padding-left: 20px; font-size: 14px; line-height: 1.8; color: #495057;">
+                    {% if categories %}
+                        {% for cat in categories %}
+                            <li><strong>{{ cat.name }}</strong> — {{ cat.description|default:"Описание отсутствует" }}</li>
+                        {% endfor %}
+                    {% else %}
+                        <li>Категорий пока нет</li>
+                    {% endif %}
+                </ul>
+            </div>
+
+            <div style="background-color: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.04); border: 1px solid #e9ecef;">
+                <h3 style="margin-top: 0; color: #212529; border-bottom: 2px solid #f1f3f5; padding-bottom: 8px; font-size: 18px; display: flex; align-items: center; gap: 8px;">🏭 Наши Производители</h3>
+                <ul style="padding-left: 20px; font-size: 14px; line-height: 1.8; color: #495057;">
+                    {% if manufacturers %}
+                        {% for man in manufacturers %}
+                            <li><strong>{{ man.name }}</strong> ({{ man.country }})</li>
+                        {% endfor %}
+                    {% else %}
+                        <li>Производителей пока нет</li>
+                    {% endif %}
+                </ul>
+            </div>
+
+        </div>
+        <div style="flex: 2; min-width: 450px; display: flex; flex-direction: column; gap: 25px;">
+            
+            <div>
+                <h3 style="margin-top: 0; color: #212529; font-size: 22px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;">🛍 Витрина детского магазина</h3>
+                <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                    {% if products %}
+                        {% for product in products %}
+                            <div style="background-color: white; width: calc(50% - 8px); min-width: 240px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); overflow: hidden; display: flex; flex-direction: column; border: 1px solid #e9ecef;">
+                                <div style="background-color: #6c757d; color: white; height: 100px; display: flex; align-items: center; justify-content: center; font-size: 30px; background: linear-content;">
+                                    🧸
+                                </div>
+                                <div style="padding: 15px; display: flex; flex-direction: column; flex-grow: 1;">
+                                    <span style="background-color: #f1f3f5; color: #6c757d; font-size: 11px; font-weight: bold; padding: 3px 8px; border-radius: 6px; align-self: flex-start; margin-bottom: 8px; border: 1px solid #e9ecef;">
+                                        {{ product.manufacturer.name }}
+                                    </span>
+                                    <h4 style="margin: 0 0 6px 0; color: #212529; font-size: 16px; font-weight: bold;">{{ product.name }}</h4>
+                                    <p style="color: #6c757d; font-size: 13px; margin: 0 0 15px 0; flex-grow: 1; line-height: 1.4;">{{ product.description }}</p>
+                                    
+                                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin-bottom: 15px;">
+                                        <span style="font-weight: bold; color: #0d6efd; font-size: 16px;">{{ product.price }} BYN</span>
+                                        <span style="color: #198754; font-weight: bold; background-color: #e8f5e9; padding: 2px 8px; border-radius: 6px; font-size: 12px;">Склад: {{ product.stock }} шт.</span>
+                                    </div>
+
+                                    <div style="border-top: 1px solid #f1f3f5; padding-top: 12px; display: flex; gap: 8px;">
+                                        <a href="/catalog/{{ product.id }}/" style="border: 1px solid #ced4da; color: #495057; text-decoration: none; padding: 6px 10px; border-radius: 6px; font-size: 13px; text-align: center; font-weight: bold;">🔍 Описание</a>
+                                        <a href="/cart/add/{{ product.id }}/" style="background-color: #0d6efd; color: white; text-decoration: none; padding: 6px 12px; border-radius: 6px; font-weight: bold; flex-grow: 1; text-align: center; font-size: 13px; display: flex; align-items: center; justify-content: center; gap: 5px;">🛒 В корзину</a>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div style="width: 100%; text-align: center; background-color: white; padding: 30px; border-radius: 12px; color: #6c757d; border: 1px solid #e9ecef; font-size: 14px; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">
+                            Детских товаров пока нет.
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

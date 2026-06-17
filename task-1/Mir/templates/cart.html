@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Корзина — Детский Мир</title>
+</head>
+<body style="font-family: sans-serif; margin: 20px; background-color: #f8f9fa;">
+    <h1>Корзина покупателя Детского Мира</h1>
+    <p><a href="/catalog/">🛍 Вернуться в каталог товаров</a> | <a href="/">🏠 На главную</a></p>
+    <hr>
+    {% if cart.items.all %}
+        <ul>
+            {% for item in cart.items.all %}
+                <li style="margin-bottom: 15px; background: white; padding: 15px; border-radius: 8px; max-width: 600px; list-style: none; box-shadow: 0 2px 5px rgba(0,0,0,0.02); border: 1px solid #e9ecef;">
+                    <strong>{{ item.product.name }}</strong> <br>
+                    Цена за единицу: {{ item.product.price }} BYN | Стоимость: {{ item.element_cost }} BYN
+                    <br><br>
+                    <form method="POST" action="/cart/update/{{ item.id }}/" style="display: inline-block;">
+                        {% csrf_token %}
+                        Количество: <input type="number" name="quantity" value="{{ item.quantity }}" min="1" style="width: 45px; text-align: center;">
+                        <button type="submit">🔄 Обновить количество</button>
+                    </form>
+                    | <a href="/cart/remove/{{ item.id }}/" style="color: #dc3545; font-weight: bold; text-decoration: none;">❌ Удалить из корзины</a>
+                </li>
+            {% endfor %}
+        </ul>
+        <hr>
+        <h3>ОБЩАЯ СТОИМОСТЬ К ОПЛАТЕ: {{ cart.total_cost }} BYN</h3>
+    {% else %}
+        <p>Ваша корзина пуста. Добавьте детские товары из каталога!</p>
+    {% endif %}
+</body>
+</html>
