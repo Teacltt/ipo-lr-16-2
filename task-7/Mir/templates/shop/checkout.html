@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Оформление заказа — Детский Мир</title>
+</head>
+<body style="font-family: sans-serif; margin: 20px; background-color: #f8f9fa;">
+
+    <div style="background: white; padding: 25px; border-radius: 12px; max-width: 600px; margin: 40px auto; box-shadow: 0 4px 6px rgba(0,0,0,0.04); border: 1px solid #e9ecef;">
+        
+        {% if success %}
+            <h1 style="margin-top: 0; color: #198754; font-size: 26px;">🎉 Заказ №{{ order.id }} успешно оформлен!</h1>
+            <p style="color: #495057; line-height: 1.6;">Ваш заказ принят. Чек в формате <strong>Excel</strong> сгенерирован и отправлен на вашу электронную почту!</p>
+            <hr style="border: 0; border-top: 1px solid #f1f3f5; margin: 20px 0;">
+            <p><a href="/catalog/" style="color: #0d6efd; font-weight: bold; text-decoration: none;">🛍 Вернуться в каталог товаров</a></p>
+        {% else %}
+            <h1 style="margin-top: 0; color: #212529; font-size: 26px;">Оформление заказа</h1>
+            <p style="color: #6c757d; font-size: 14px;">Пожалуйста, заполните данные для доставки ваших детских товаров и игрушек.</p>
+            <hr style="border: 0; border-top: 1px solid #f1f3f5; margin: 20px 0;">
+            
+            <h4 style="color: #495057; margin-bottom: 10px;">Ваш чек:</h4>
+            <ul style="padding-left: 20px; margin-bottom: 20px;">
+                {% if cart.items.all %}
+                    {% for item in cart.items.all %}
+                        <li style="margin-bottom: 8px; color: #495057; list-style: square;">
+                            <strong>{{ item.product.name }}</strong> — {{ item.quantity }} шт. x {{ item.product.price }} BYN
+                        </li>
+                    {% endfor %}
+                {% else %}
+                    <li style="color: #6c757d; list-style: none;">В вашей корзине пока нет товаров для вывода.</li>
+                {% endif %}
+            </ul>
+            
+            <h3 style="color: #212529; margin-bottom: 25px;">ИТОГО К ОПЛАТЕ: {{ cart.total_cost }} BYN</h3>
+            
+            <form method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+                {% csrf_token %}
+                
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <label style="font-size: 14px; font-weight: bold; color: #495057;">ФИО Получателя:</label>
+                    <input type="text" name="client_name" required placeholder="Петр Петров" style="padding: 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px;">
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <label style="font-size: 14px; font-weight: bold; color: #495057;">Контактный телефон:</label>
+                    <input type="text" name="client_phone" required placeholder="+375 (XX) XXX-XX-XX" style="padding: 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px;">
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 5px;">
+                    <label style="font-size: 14px; font-weight: bold; color: #495057;">Адрес доставки заказа:</label>
+                    <input type="text" name="client_address" required placeholder="г. Минск, ул. Игрушечная, д. 5, кв. 12" style="padding: 10px; border: 1px solid #ced4da; border-radius: 6px; font-size: 14px;">
+                </div>
+                
+                <div style="margin-top: 15px; display: flex; gap: 15px; align-items: center;">
+                    <button type="submit" style="background-color: #198754; color: white; border: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 15px;">🚀 Подтвердить заказ</button>
+                    <a href="/cart/" style="color: #6c757d; text-decoration: none; font-size: 14px;">❌ Отмена</a>
+                </div>
+            </form>
+        {% endif %}
+        
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Каталог игрушек — Детский Мир{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 p-3 bg-white rounded mb-4">
+            <h5 class="fw-bold mb-3 text-dark">Фильтры</h5>
+            <form method="GET" action="/catalog/">
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">Поиск игрушки:</label>
+                    <input type="text" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Название...">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">Категория:</label>
+                    <select name="category" class="form-select">
+                        <option value="">Все категории</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">Производитель:</label>
+                    <select name="manufacturer" class="form-select">
+                        <option value="">Все бренды</option>
+                        {% for manufacturer in manufacturers %}
+                            <option value="{{ manufacturer.id }}" {% if request.GET.manufacturer == manufacturer.id|stringformat:"s" %}selected{% endif %}>
+                                {{ manufacturer.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 fw-bold mb-2">Применить фильтры</button>
+                <a href="/catalog/" class="btn btn-outline-secondary w-100 btn-sm">Сбросить</a>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <h2 class="fw-bold text-dark mb-4">Каталог детских товаров</h2>
+        
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+            {% for product in page_obj %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm border-0 bg-white">
+                        <div class="card-body d-flex flex-column p-4">
+                            <h5 class="card-title fw-bold text-dark mb-2">{{ product.name }}</h5>
+                            <p class="card-text text-muted flex-grow-1 mb-3" style="font-size: 14px;">{{ product.description }}</p>
+                            <div class="d-flex justify-content-between align-items-center mt-auto">
+                                <span class="h5 mb-0 text-success fw-bold">{{ product.price }} BYN</span>
+                                <a href="/catalog/{{ product.id }}/" class="btn btn-outline-primary btn-sm px-3 fw-bold">Подробнее</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="col-12 text-center py-5 bg-white rounded">
+                    <p class="lead text-muted mb-0">Товары по выбранным критериям не найдены.</p>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if page_obj.has_other_pages %}
+            <nav class="mt-5">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.manufacturer %}&manufacturer={{ request.GET.manufacturer }}{% endif %}">&laquo;</a>
+                        </li>
+                    {% endif %}
+
+                    {% for num in page_obj.paginator.page_range %}
+                        <li class="page-item {% if page_obj.number == num %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.manufacturer %}&manufacturer={{ request.GET.manufacturer }}{% endif %}">{{ num }}</a>
+                        </li>
+                    {% endfor %}
+
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.category %}&category={{ request.GET.category }}{% endif %}{% if request.GET.manufacturer %}&manufacturer={{ request.GET.manufacturer }}{% endif %}">&raquo;</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

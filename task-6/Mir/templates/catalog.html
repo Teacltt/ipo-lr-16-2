@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Каталог игрушек — Детский Мир{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+<div id="alert-container" style="position: fixed; top: 20px; right: 20px; z-index: 1050; max-width: 400px;"></div>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="card shadow-sm border-0 p-3 bg-white rounded mb-4">
+            <h5 class="fw-bold mb-3 text-dark">Фильтры</h5>
+            <form method="GET" action="/catalog/">
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">Поиск игрушки:</label>
+                    <input type="text" name="q" value="{{ request.GET.q }}" class="form-control" placeholder="Название...">
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">Категория:</label>
+                    <select name="category" class="form-select">
+                        <option value="">Все категории</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" {% if request.GET.category == category.id|stringformat:"s" %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">Производитель:</label>
+                    <select name="manufacturer" class="form-select">
+                        <option value="">Все бренды</option>
+                        {% for manufacturer in manufacturers %}
+                            <option value="{{ manufacturer.id }}" {% if request.GET.manufacturer == manufacturer.id|stringformat:"s" %}selected{% endif %}>
+                                {{ manufacturer.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 fw-bold mb-2">Применить фильтры</button>
+                <a href="/catalog/" class="btn btn-outline-secondary w-100 btn-sm">Сбросить</a>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-md-9">
+        <h2 class="fw-bold text-dark mb-4">Каталог детских товаров</h2>
+        
+        <div id="loading-spinner" class="text-center my-5" style="padding: 40px; border: 1px solid #dee2e6; background-color: #f8f9fa; border-radius: 8px;">
+            <p style="color: #0d6efd; font-weight: bold; font-size: 18px; margin-bottom: 5px;">🌀 Загрузка товаров...</p>
+            <p style="color: #6c757d; font-size: 14px; margin-bottom: 0;">Пожалуйста, подождите, идет синхронизация с API Детского Мира</p>
+        </div>
+
+        <div id="products-container" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4"></div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const container = document.getElementById('products-container');
+    const spinner = document.getElementById('loading-spinner');
+
+    if (container) {
+        fetch('/api/products/')
+            .then(response => {
+                if (!response.ok) throw new Error('Ошибка сети');
+                return response.json();
+            })
+            .then(data => {
+                if (spinner) spinner.style.display = 'none';
+                if (data.length === 0) {
+                    container.innerHTML = '<div class="col-12 text-center py-4 text-muted">Игрушки отсутствуют</div>';
+                    return;
+                }
+                container.innerHTML = data.map(product => `
+                    <div class="col" style="margin-bottom: 20px; border-bottom: 1px dashed #dee2e6; padding-bottom: 20px;">
+                        <h5 style="font-weight: bold; color: #212529; margin-bottom: 5px;">${product.name}</h5>
+                        <p style="color: #6c757d; font-size: 14px; margin-bottom: 10px;">${product.description}</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span style="font-weight: bold; color: #198754;">${product.price} BYN</span>
+                            <div style="display: flex; gap: 10px;">
+                                <a href="/catalog/${product.id}/" style="color: #0d6efd; text-decoration: none; font-size: 14px; font-weight: bold;">Подробнее</a>
+                                <button onclick="addToCartAsync(${product.id})" style="background: none; border: none; color: #198754; font-size: 14px; font-weight: bold; cursor: pointer;">[В корзину]</button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            })
+            .catch(error => {
+                if (spinner) spinner.style.display = 'none';
+                container.innerHTML = `<div class="col-12 text-center py-4 text-danger">Ошибка API: ${error.message}</div>`;
+            });
+    }
+});
+
+function addToCartAsync(productId) {
+    const alertContainer = document.getElementById('alert-container');
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+
+    fetch(`/cart/add/${productId}/`, {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': csrfToken,
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => {
+        alert(JSON.stringify({ status: "success", message: "Игрушка добавлена в корзину без перезагрузки!" }));
+    })
+    .catch(() => {
+        alert(JSON.stringify({ status: "error", message: "Не удалось обратиться к API корзины" }));
+    });
+}
+</script>
+{% endblock %}

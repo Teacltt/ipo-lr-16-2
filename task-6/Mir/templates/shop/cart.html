@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Корзина — Детский Мир{% endblock %}
+
+{% block content %}
+<div>
+    <h1>Корзина покупателя Детского Мира</h1>
+    <p><a href="/catalog/">🛍 Вернуться в каталог товаров</a> | <a href="/">🏠 На главную</a></p>
+    <hr>
+
+    {% if cart.items.all %}
+        <ul>
+            {% for item in cart.items.all %}
+                <li>
+                    <strong>{{ item.product.name }}</strong> — {{ item.product.price }} BYN 
+                    (Количество: {{ item.quantity }} шт.) — Итого: {{ item.element_cost }} BYN
+                    | <a href="/cart/remove/{{ item.id }}/">❌ Удалить</a>
+                </li>
+            {% endfor %}
+        </ul>
+        <hr>
+        <h4>Итого к оплате: <span style="color: #198754;">{{ cart.total_cost }} BYN</span></h4>
+        <p><a href="/checkout/" style="display: inline-block; background-color: #0d6efd; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none; font-weight: bold;">🚀 Оформить заказ</a></p>
+    {% else %}
+        <p>Ваша корзина пуста. Добавьте детские товары из каталога!</p>
+    {% endif %}
+</div>
+{% endblock %}
