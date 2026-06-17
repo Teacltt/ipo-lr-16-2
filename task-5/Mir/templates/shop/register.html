@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Регистрация нового покупателя — Детский Мир</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .auth-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #dee2e6; width: 400px; }
+        .auth-title { margin-top: 0; color: #0d6efd; text-align: center; margin-bottom: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; color: #495057; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; }
+        .btn-auth { width: 100%; padding: 12px; background-color: #0d6efd; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        .auth-link { text-align: center; margin-top: 15px; font-size: 14px; }
+        .auth-link a { color: #0d6efd; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="auth-card">
+        <h3 class="auth-title">👶 Регистрация на площадке</h3>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="form-group">
+                <label class="form-label">Полное ФИО покупателя:</label>
+                <input type="text" name="full_name" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Контактный телефон:</label>
+                <input type="tel" name="phone" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Адрес доставки заказов:</label>
+                <input type="text" name="address" class="form-control" required>
+            </div>
+            <button type="submit" class="btn-auth">Зарегистрироваться</button>
+        </form>
+        <div class="auth-link">Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></div>
+    </div>
+</body>
+</html>

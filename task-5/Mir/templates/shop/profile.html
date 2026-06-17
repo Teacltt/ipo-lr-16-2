@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Личный кабинет покупателя — Детский Мир</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f8f9fa; margin: 0; padding: 0; color: #212529; }
+        .d-none { display: none !important; }
+        .container { max-width: 1140px; margin: 30px auto; padding: 0 20px; }
+        .nav-box { background-color: #0d6efd; padding: 15px 0; } /* Синий цвет в стиле Детского мира */
+        .nav-container { max-width: 1140px; margin: 0 auto; padding: 0 20px; display: flex; gap: 20px; }
+        .nav-link { color: rgba(255,255,255,.75); text-decoration: none; font-weight: bold; }
+        .nav-link.active { color: #fff; }
+        .card { background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.04); border: 1px solid #e9ecef; margin-bottom: 20px; }
+        .text-center { text-align: center; }
+        .text-danger { color: #dc3545; }
+        .text-success { color: #198754; }
+        .text-muted { color: #6c757d; font-size: 14px; }
+        .btn { display: inline-block; padding: 10px 20px; font-weight: bold; text-decoration: none; border-radius: 6px; border: none; cursor: pointer; text-align: center; }
+        .btn-success { background-color: #198754; color: white; }
+        .btn-primary { background-color: #0d6efd; color: white; }
+        .btn-outline-success { background: none; border: 1px solid #198754; color: #198754; font-weight: bold; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
+        .btn-outline-success:hover { background: #198754; color: white; }
+    </style>
+</head>
+<body>
+
+    <!-- Верхнее меню Детского мира -->
+    <div class="nav-box">
+        <div class="nav-container">
+            <a class="nav-link" href="{% url 'home' %}" style="color: #fff; margin-right: 20px;">🧸 Детский Мир</a>
+            <a class="nav-link" href="{% url 'home' %}">Главная</a>
+            <a class="nav-link active" href="{% url 'profile_page' %}">Личный кабинет</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Блок требования 3: Заглушка ограничения доступа для неавторизованных гостей -->
+        <div id="unauthorized-block" class="d-none text-center card">
+            <h3 class="text-danger">Доступ ограничен</h3>
+            <p class="text-muted">Для просмотра профиля и истории покупок детских товаров необходимо войти в аккаунт.</p>
+            <a href="{% url 'login' %}" class="btn btn-success" style="margin-top: 15px; padding: 12px 30px;">Войти в систему</a>
+        </div>
+        <!-- Рабочая зона личного кабинета (скрыта по умолчанию) -->
+        <div id="profile-content" class="d-none" style="display: flex; gap: 30px; align-items: flex-start;">
+            
+            <!-- Левая колонка: Форма персональных данных (Пункт 1 задания 4) -->
+            <div style="flex: 1; min-width: 350px;" class="card">
+                <h4 style="margin-top: 0; color: #0d6efd;">👤 Профиль покупателя</h4>
+                <div id="profile-alert" class="d-none" style="padding: 10px; margin-bottom: 15px; border-radius: 4px; font-weight: bold; text-align: center;"></div>
+                
+                <form id="profile-form">
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px;">Имя пользователя (Логин):</label>
+                        <input type="text" id="username" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; background-color: #f1f3f5;" readonly>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px;">Электронная почта (Email):</label>
+                        <input type="email" id="email" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box; background-color: #f1f3f5;" readonly>
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px;">ФИО Получателя:</label>
+                        <input type="text" id="full_name" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box;" required placeholder="Введите ваше ФИО">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px;">Контактный телефон:</label>
+                        <input type="tel" id="phone" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box;" required placeholder="+375 (XX) XXX-XX-XX">
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px;">Адрес доставки:</label>
+                        <textarea id="address" style="width: 100%; padding: 10px; border: 1px solid #ced4da; border-radius: 6px; box-sizing: border-box;" rows="3" required placeholder="Город, улица, дом, квартира"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">Сохранить изменения</button>
+                </form>
+            </div>
+
+            <!-- Правая колонка: Таблица истории заказов игрушек (Пункт 2 задания 4) -->
+            <div style="flex: 1.5; min-width: 450px;" class="card">
+                <h4 style="margin-top: 0; color: #198754;">📦 Мои покупки</h4>
+                <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                    <thead>
+                        <tr style="background-color: #f1f3f5; border-bottom: 2px solid #dee2e6;">
+                            <th style="padding: 12px 8px;">№ Чека</th>
+                            <th style="padding: 12px 8px;">Дата покупки</th>
+                            <th style="padding: 12px 8px;">Сумма (BYN)</th>
+                            <th style="padding: 12px 8px;">Действие</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-tbody">
+                        <!-- Сюда добавятся строки покупок через JS -->
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Модальное окно детализации состава детского чека (Блок 2, пункт 2) -->
+    <div id="orderModal" class="d-none" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 1000;">
+        <div style="background: white; padding: 25px; border-radius: 12px; width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+            <h5 id="modal-order-title" style="margin-top: 0; color: #198754; font-size: 18px; border-bottom: 1px solid #eee; padding-bottom: 10px;">Детали заказа</h5>
+            <ul id="modal-items-list" style="list-style: none; padding: 0; margin: 15px 0; max-height: 200px; overflow-y: auto;">
+                <!-- Элементы добавятся через JS -->
+            </ul>
+            <div style="text-align: right; font-weight: bold; font-size: 18px; color: #198754; border-top: 1px solid #eee; padding-top: 10px; margin-bottom: 15px;">
+                Итого: <span id="modal-total-cost">0.00</span> BYN
+            </div>
+            <button class="btn btn-success" style="width: 100%;" onclick="closeModal()">Закрыть детали чека</button>
+        </div>
+    </div>
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        // Проверка сессии при загрузке кабинета «Детского мира»
+        document.addEventListener("DOMContentLoaded", function() {
+            fetch('/api/me/')
+                .then(response => {
+                    if (response.status === 403 || response.status === 401) {
+                        // Показываем заглушку ограничения доступа (Пункт 3)
+                        document.getElementById('unauthorized-block').classList.remove('d-none');
+                        throw new Error('Unauthorized');
+                    }
+                    return response.json();
+                })
+                .then(profile => {
+                    // Активируем двухколоночный контент личного кабинета (Пункт 1)
+                    document.getElementById('profile-content').classList.remove('d-none');
+                    document.getElementById('username').value = profile.username;
+                    document.getElementById('email').value = profile.email || '';
+                    document.getElementById('full_name').value = profile.full_name || '';
+                    document.getElementById('phone').value = profile.phone || '';
+                    document.getElementById('address').value = profile.address || '';
+                    
+                    loadUserOrders();
+                })
+                .catch(err => console.log("Контроль гостевой сессии: ", err.message));
+        });
+
+        // Отправка формы персональных данных покупателя методом PATCH (Пункт 1)
+        document.getElementById('profile-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const alertBox = document.getElementById('profile-alert');
+            
+            const updatedData = {
+                full_name: document.getElementById('full_name').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value
+            };
+
+            fetch('/api/me/', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(updatedData)
+            })
+            .then(res => {
+                alertBox.classList.remove('d-none');
+                alertBox.style.backgroundColor = res.ok ? '#d1e7dd' : '#f8d7da';
+                alertBox.style.color = res.ok ? '#0f5132' : '#842029';
+                alertBox.innerText = res.ok ? "✨ Профиль покупателя успешно обновлен!" : "❌ Ошибка сохранения.";
+            });
+        });
+
+        // Динамическая загрузка таблицы покупок детских товаров методом GET (Пункт 2)
+        function loadUserOrders() {
+            fetch('/api/orders/')
+                .then(res => res.json())
+                .then(orders => {
+                    const tbody = document.getElementById('orders-tbody');
+                    tbody.innerHTML = '';
+                    
+                    if (orders.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#6c757d;padding:20px;">У вас пока нет оформленных заказов.</td></tr>';
+                        return;
+                    }
+
+                    orders.forEach(order => {
+                        const date = new Date(order.created_at).toLocaleDateString('ru-RU');
+                        const tr = document.createElement('tr');
+                        tr.style.borderBottom = '1px solid #dee2e6';
+                        tr.innerHTML = `
+                            <td style="padding:12px 8px;font-weight:bold;">#${order.id}</td>
+                            <td style="padding:12px 8px;">${date}</td>
+                            <td style="padding:12px 8px;color:#198754;font-weight:bold;">${order.total_cost}</td>
+                            <td style="padding:12px 8px;">
+                                <button class="btn-none btn-order-detail btn-outline-success" onclick="showOrderDetails(${order.id})">Подробнее</button>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                });
+        }
+
+        // Вывод детализированного состава чека в модальное окно (Пункт 2)
+        function showOrderDetails(orderId) {
+            fetch(`/api/orders/${orderId}/`)
+                .then(res => res.json())
+                .then(order => {
+                    document.getElementById('modal-order-title').innerText = `Детали чека №${order.id}`;
+                    document.getElementById('modal-total-cost').innerText = order.total_cost;
+                    
+                    const itemsList = document.getElementById('modal-items-list');
+                    itemsList.innerHTML = '';
+                    
+                    order.items.forEach(item => {
+                        const li = document.createElement('li');
+                        li.style.cssText = 'padding:10px 0; border-bottom:1px solid #eee; display:flex; justify-content:space-between;';
+                        li.innerHTML = `
+                            <div>
+                                <strong>Детский товар ID: ${item.product}</strong>
+                                <div style="color:#6c757d;font-size:12px;">Количество: ${item.quantity} шт.</div>
+                            </div>
+                            <span style="font-weight:bold;color:#6c757d;">${item.price} BYN</span>
+                        `;
+                        itemsList.appendChild(li);
+                    });
+
+                    const modal = document.getElementById('orderModal');
+                    modal.classList.remove('d-none');
+                    modal.style.display = 'flex';
+                });
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('orderModal');
+            modal.classList.add('d-none');
+            modal.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

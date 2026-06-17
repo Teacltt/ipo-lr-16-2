@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Оформление заказа — Детский Мир</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f8f9fa; margin: 0; padding: 20px; }
+        .checkout-container { max-width: 600px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; font-weight: bold; margin-bottom: 5px; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; }
+        .btn-submit { background-color: #198754; color: white; border: none; padding: 12px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <h2>Оформление заказа</h2>
+        <p style="color:#6c757d;">Пожалуйста, заполните данные для доставки ваших детских товаров.</p>
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label class="form-label">ФИО Получателя:</label>
+                <input type="text" name="full_name" class="form-control" value="{{ request.user.profile.full_name }}" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Контактный телефон:</label>
+                <input type="tel" name="phone" class="form-control" value="{{ request.user.profile.phone }}" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Адрес доставки:</label>
+                <input type="text" name="address" class="form-control" value="{{ request.user.profile.address }}" required>
+            </div>
+            <button type="submit" class="btn-submit">Подтвердить заказ</button>
+        </form>
+    </div>
+</body>
+</html>

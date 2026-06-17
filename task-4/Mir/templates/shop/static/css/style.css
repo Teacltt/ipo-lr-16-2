@@ -1,0 +1,34 @@
+body {
+    background-color: #f0f8ff !important;
+}
+
+.bg-detmir-blue {
+    background-color: #00b4d8 !important;
+}
+
+.text-detmir-blue {
+    color: #00b4d8 !important;
+}
+
+.btn-detmir {
+    background-color: #0077b6 !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 20px !important;
+}
+
+.btn-detmir:hover {
+    background-color: #0096c7 !important;
+}
+
+.card {
+    border: 2px solid #e2eafc !important;
+    border-radius: 20px !important;
+    background-color: #ffffff !important;
+    transition: transform 0.2s ease-in-out !important;
+}
+
+.card:hover {
+    transform: scale(1.03);
+    border-color: #90e0ef !important;
+}
