@@ -1,0 +1,10 @@
+# === ЗАДАНИЕ 4: АВТОМАТИЧЕСКИЕ СЕРВЕРНЫЕ ФАЗЫ СБОРКИ ДЛЯ ДЕТСКОГО МИРА ===
+
+[phases.setup]
+nixPkgs = ["python310"]
+
+[phases.build]
+cmds = [
+    "python manage.py collectstatic --noinput", # Автоматический сборщик картинок и стилей
+    "python manage.py migrate --noinput"        # Автоматический накат таблиц покупателей и чеков
+]

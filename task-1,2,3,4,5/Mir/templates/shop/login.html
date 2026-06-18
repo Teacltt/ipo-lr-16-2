@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход в систему — Детский Мир</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f8f9fa; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .auth-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border: 1px solid #dee2e6; width: 380px; }
+        .auth-title { margin-top: 0; color: #198754; text-align: center; margin-bottom: 20px; }
+        .btn-auth { width: 100%; padding: 12px; background-color: #198754; color: white; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        .auth-link { text-align: center; margin-top: 15px; font-size: 14px; }
+        .auth-link a { color: #198754; text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="auth-card">
+        <h3 class="auth-title">🔐 Авторизация клиента</h3>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn-auth">Войти в личный кабинет</button>
+        </form>
+        <div class="auth-link">Новый пользователь? <a href="{% url 'register' %}">Создать аккаунт</a></div>
+    </div>
+</body>
+</html>

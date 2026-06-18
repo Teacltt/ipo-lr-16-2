@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Детский Мир — Супермаркет игрушек{% endblock %}</title>
+    <link href="https://jsdelivr.net" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body style="display: flex; flex-direction: column; min-height: 100vh;">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-detmir-blue shadow-sm py-3">
+        <div class="container">
+            <a class="navbar-brand fw-bold fs-3" href="/">🧸 Детский Мир</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav me-auto">
+                    <a class="nav-link text-white fw-medium" href="/">🚂 Главная</a>
+                    <a class="nav-link text-white fw-medium" href="/catalog/">🧱 Каталог игрушек</a>
+                    <a class="nav-link text-white fw-medium" href="/cart/">🎈 Корзина</a>
+                </div>
+                <div class="navbar-nav">
+                    {% if user.is_authenticated %}
+                        <span class="navbar-text me-3 text-white fw-bold">Привет, {{ user.username }}!</span>
+                        <a class="btn btn-light btn-sm px-3 text-detmir-blue fw-bold rounded-pill" href="/admin/logout/">Выйти</a>
+                    {% else %}
+                        <a class="btn btn-light btn-sm px-3 text-detmir-blue fw-bold rounded-pill" href="/admin/login/">Войти</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container my-5" style="flex: 1;">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-detmir-blue text-white text-center py-4 mt-auto">
+        <div class="container">
+            <p class="mb-1 fw-bold">🎉 Детский Мир — Радость и улыбки в каждый дом!</p>
+            <p class="mb-0 text-white-50 small">Самый большой выбор развивающих игр, конструкторов и товаров для малышей. Все права защищены &copy; 2026</p>
+        </div>
+    </footer>
+
+    <script src="https://jsdelivr.net"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
